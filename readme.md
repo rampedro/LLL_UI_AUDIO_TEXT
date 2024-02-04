@@ -9,8 +9,9 @@
 
 
 
+## Getting Started
 
-## How to Run
+#### How to Run
 
 
 Before anything, run the bash keyyer.sh copy the Bearer Token and pased it at the beging og the app.py 
@@ -31,9 +32,25 @@ and >docker run -p 8090:8090 my-flask-app
 ## To do:
 
 
-### Ehsan: Generate the text from the audio , and connecting it to element in DOM with tag id "user_input" 
-### Adding Medical condiiton Entity recognition
-### Developing UI elements to fit user (Clinican needs)
-### Interaction Design for iterative inferencing 
-### Ontology/Reasoner options 
+## Features
+
+- **Ehsan: Generate Text from Audio**
+  - This feature automatically converts audio input to text and connects it to a DOM element with the tag id `user_input`.
+
+- **Adding Medical Condition Entity Recognition**
+  - Implements entity recognition to identify and categorize medical conditions mentioned within the text.
+
+- **Developing UI Elements to Fit User (Clinician Needs)**
+  - Custom UI components designed specifically for clinician use, enhancing usability and accessibility.
+
+- **Interaction Design for Iterative Inferencing**
+  - A user interface design that supports iterative inferencing, allowing users to refine inputs and outputs through interaction.
+
+- **Ontology/Reasoner Options**
+  - Integration of ontology/reasoner tools to support advanced data interpretation and decision-making processes.
+  - [View Code](./path/to/ontology/reasoner/code)
+
+
+
+
 
