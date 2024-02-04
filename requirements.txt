@@ -1,0 +1,7 @@
+Flask==2.0.1
+requests=2.31.0
+Werkzeug==2.0.1
+nltk
+transformers
+drug-named-entity-recognition
+jsonify

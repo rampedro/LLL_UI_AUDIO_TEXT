@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generated Text</title>
+    <style>
+        body, html {
+            margin: 10px; /* Corrected margin value */
+            padding: 4px; /* Corrected padding value */
+            height: 100%;
+        }
+
+        .resultTextBox {
+            height: 1500px;
+            width: 100%;
+        }
+
+        #user_input {
+            width: 100%;
+        }
+
+        #container {
+            flex: 1;
+            display: flex;
+        }
+
+        #originalText {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid #ccc;
+            width: 100%;
+            height: 100%;
+            transition: all 0.3s ease; /* Add smooth transition */
+        }
+
+        #generatedText {
+            flex: 1;
+            padding: 20px;
+            width: 50%;
+            height: 100%;
+        }
+
+        #buttonRow {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .highlight {
+            background-color: yellow; /* Added a CSS class for highlighting */
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+<body>
+    <h1>Input Text</h1>
+    <form method="GET" action="http://192.168.12.23:8090/generate_text">
+        <textarea id="user_input" name="user_input" rows="10"></textarea>
+        <div id="buttonRow">
+            <input type="submit" value="Generate">
+        </div>
+    </form>
+
+    <h1>Generated Text and Report</h1>
+    <div id="container">
+        <div id="originalText">
+            <h2>Original Text</h2>
+            <p readonly class="resultTextBox" id="originalText_">HELLO , THIS IS a sample</p>
+        </div>
+
+        <div id="generatedText">
+            <h2>Pretty Formatted Report
+                <button id="saveAsText">Save as Text</button>
+                <button id="toggleOriginalText">Show/Hide Original Text</button> <!-- Added toggle button -->
+            </h2>
+            <!-- Replace this with your formatted report content -->
+            <div id="formattedReport">
+                <textarea class="resultTextBox" id="generatedText_"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const generatedTextDiv = document.getElementById('generatedText_');
+        const textareaElement = document.getElementById('generatedText');
+        const saveAsTextButton = document.getElementById('saveAsText');
+        const toggleOriginalTextButton = document.getElementById('toggleOriginalText'); // Added toggle button
+        const originalTextDiv = document.getElementById('originalText');
+
+        let selectedText = ""; // Initialize selectedText as an empty string
+
+        function logSelectedText() {
+            selectedText = window.getSelection().toString().trim();
+
+            if (selectedText) {
+                console.log('Selected Text:', selectedText);
+                highlightText(selectedText.split(" "),"highlight");
+            } else {
+                clearHighlight();
+            }
+        }
+
+        function highlightText(terms, className) {
+            terms.forEach(function (word) {
+                var textToHighlight = originalTextDiv.innerHTML;
+                var highlightedText = textToHighlight.replace(new RegExp('\\b' + word + '\\b', 'g'), '<span class="' + className + '">' + word + '</span>');
+                originalTextDiv.innerHTML = highlightedText;
+            });
+        }
+
+        function clearHighlight() {
+            originalTextDiv.innerHTML = originalTextDiv.innerHTML.replace(/<span class="highlight">/g, '').replace(/<\/span>/g, '');
+        }
+
+        // Add a click event listener to the "Save as Text" button
+      saveAsTextButton.addEventListener('click', function () {
+    const textToSave = generatedTextDiv.value;
+
+    // Create a new Blob containing the text
+    const blob = new Blob([textToSave], { type: 'text/plain' });
+
+    // Create a download link for the Blob
+    const a = document.createElement('a');
+    a.href = window.URL.createObjectURL(blob);
+    a.download = 'generated_text.txt';
+
+    // Trigger a click event on the download link
+    a.click();
+});
+
+
+        // Add a click event listener to the <textarea> for logging selected text
+        textareaElement.addEventListener('mouseup', logSelectedText);
+
+        // Add a click event listener to toggle the visibility of originalText div
+        toggleOriginalTextButton.addEventListener('click', function () {
+            originalTextDiv.style.display = originalTextDiv.style.display === 'none' ? 'block' : 'none';
+        });
+    </script>
+</body>
+</html>

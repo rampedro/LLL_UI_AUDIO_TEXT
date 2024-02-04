@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generated Text</title>
+    <style>
+        body, html {
+            margin: 10px;
+            padding: 4px;
+            height: 100%;
+        }
+
+        .resultTextBox {
+            height: 1500px;
+            width: 100%;
+        }
+
+        #user_input {
+            width: 100%;
+        }
+        
+        #user_config_area{
+           width: 100%;
+
+        }
+
+        #container {
+            flex: 1;
+            display: flex;
+        }
+
+        #originalText {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid #ccc;
+            width: 100%;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        #generatedText {
+            flex: 1;
+            padding: 20px;
+            width: 50%;
+            height: 100%;
+        }
+
+        #buttonRow {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuzzysort/1.1.0/fuzzysort.min.js"></script>
+
+<!-- SPINNER -->
+
+
+
+
+
+</head>
+<body>
+
+<h1>Input Text</h1>
+<form method="GET" action="/setup_n_generate_text">
+    <textarea id="user_config_area" name="user_config_area" rows="10">Max Token - System Instruction</textarea>
+    <textarea id="user_input" name="user_input" rows="10">Paste/write the user text here</textarea>
+    <div id="buttonRow">
+        <input type="submit" value="Generate">
+    </div>
+</form>
+
+<h1>Text and Report</h1>
+<div id="container">
+    <div id="originalText">
+    
+
+
+
+        <h2>Original Text</h2>
+        <p readonly class="resultTextBox" id="originalText_">{{ original_text }}</p>
+    </div>
+
+     <h2>Drugs in Text</h2>
+        <!-- <p >{{ drugs }}</p> -->
+
+
+<div id="container">
+    <div id="viz"></div> <!-- Container for the D3 visualization -->
+</div>
+
+
+    <div id="generatedText">
+        <h2>Pretty Formatted Report
+            <button id="saveAsText">Save as Text</button>
+            <button id="toggleOriginalText">Show/Hide Original Text</button>
+        </h2>
+        <div id="formattedReport">
+            <textarea class="resultTextBox" id="generatedText_">{{ combined_result }}</textarea>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script type="text/javascript">
+    
+
+var data = JSON.parse('{{ drugs | safe }}');
+
+    console.log(data);  // Now `data` is a JavaScript object.
+
+
+</script>
+
+
+<script type="module">
+
+// Load the Observable runtime and a notebook
+import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@4?module";
+import define from "https://api.observablehq.com/@jashkenas/inputs.js?v=3";
+
+const runtime = new Runtime();
+const main = runtime.module(define, name => {
+  if (name === "checkbox") {
+    const div = document.createElement("div");
+    document.body.appendChild(div);
+    return new Inspector(div);
+  }
+});
+
+var data = JSON.parse('{{ drugs | safe }}');
+data = data
+console.log("here is data ok ? ")
+console.log(data[0])
+// Define the width and height for the SVG
+const width = 550, height = 550;
+
+
+
+function createHierarchy(data) {
+  // Assuming 'data' is an array of objects where each object represents a drug
+  const root = {
+    name: 'All Drugs', // Name of the root node
+    children: data.map(drug => ({
+      name: drug, // Use the drug's name as the node name
+      // No further children since there's no hierarchical relationship provided
+      // If there were a way to determine children, it would be implemented here
+    }))
+  };
+
+  return root;
+}
+
+
+
+
+const hierarchicalData = createHierarchy(data);
+
+const svg = d3.select("#viz").append("svg")
+              .attr("width", width)
+              .attr("height", height);
+
+const g = svg.append("g")
+             .attr("transform", "translate(75,75)");
+
+const treeLayout = d3.tree().size([400, 400]);
+
+const root = d3.hierarchy(hierarchicalData); // Use the hierarchical data here
+treeLayout(root);
+
+const links = g.selectAll(".link")
+  .data(root.links())
+  .enter().append("path")
+    .attr("class", "link")
+    .attr("d", d3.linkVertical()
+      .x(d => d.x)
+      .y(d => d.y))
+    .style("fill", "none")
+    .style("stroke", "#ccc")
+    .style("stroke-width", "2px");
+
+const nodes = g.selectAll(".node")
+  .data(root.descendants())
+  .enter().append("g")
+    .attr("class", "node")
+    .attr("transform", d => `translate(${d.x},${d.y})`);
+
+nodes.append("circle")
+  .attr("r", 10)
+  .attr("fill", "steelblue");
+
+nodes.append("text")
+  .attr("dy", "0.31em")
+  .attr("x", d => d.children ? -12 : 12)
+  .style("text-anchor", d => d.children ? "end" : "start")
+  .text(d => {
+    // Assuming d.data.name is an array of objects, each with its own 'name' property.
+    if (Array.isArray(d.data.name)) {
+        // Map each object in the array to its 'name' property and join them into a string.
+        return d.data.name.map(obj => obj.name).join(", ");
+    } else {
+        // If d.data.name is not an array, just return it as a string.
+        return JSON.stringify(d.data.name);
+    }
+})
+
+  .style("fill", "black")
+  .style("font", "10px sans-serif");
+
+
+
+
+</script>
+
+
+
+
+
+<script>
+    const orgTextInput = document.getElementById('user_input');
+    const textareaElement = document.getElementById('generatedText');
+    const saveAsTextButton = document.getElementById('saveAsText');
+    const toggleOriginalTextButton = document.getElementById('toggleOriginalText');
+    const originalTextDiv = document.getElementById('originalText');
+    const orginalText = document.getElementById("originalText_");
+
+    const generatedText = document.getElementById('generatedText_');
+
+    const drugText = "asd"
+
+    function calculateLevenshteinDistance(word, term) {
+        var matrix = [];
+        for (var i = 0; i <= word.length; i++) {
+            matrix[i] = [i];
+        }
+        for (var j = 0; j <= term.length; j++) {
+            matrix[0][j] = j;
+        }
+
+        for (var i = 1; i <= word.length; i++) {
+            for (var j = 1; j <= term.length; j++) {
+                var cost =
+                    word.charAt(i - 1) === term.charAt(j - 1) ? 0 : 1;
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j] + 1,
+                    matrix[i][j - 1] + 1,
+                    matrix[i - 1][j - 1] + cost
+                );
+            }
+        }
+
+        return matrix[word.length][term.length];
+    }
+
+    function fuzzyMatch(word, term, threshold = 0.7) {
+        if (stopWords.includes(word) || stopWords.includes(term)) {
+            return false;
+        }
+
+        var maxLen = Math.max(word.length, term.length);
+        var distance = calculateLevenshteinDistance(word, term);
+        var similarity = 1 - distance / maxLen;
+
+        return similarity >= threshold;
+    }
+
+    function fuzzyMatchSentence(selectedSentence, originalText) {
+        const selectedWords = selectedSentence.split(/\s+/) //.map(word => word.replace(punctuation, ''));
+        const originalWords = originalText.split(/\s+/).map(word => word.replace(punctuation, ' '));
+        const highlightedWords = [];
+
+        selectedWords.forEach(function (selectedWord) {
+            originalWords.forEach(function (originalWord) {
+                if (fuzzyMatch(selectedWord, originalWord)) {
+                    if (!highlightedWords.includes(originalWord)) {
+                        highlightedWords.push(originalWord);
+                        console.log(originalWord)                    }
+                }
+            });
+        });
+
+        return highlightedWords.join(" ");
+    }
+
+    var punctuation = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g; // Regular expression to match punctuation
+    var stopWords = [
+        "a",
+        "an",
+        "the",
+        "in",
+        "on",
+        "at",
+        "is",
+        "and",
+        "to",
+        "with",
+        "as",
+        "by",
+        "of",
+        "for",
+        "this",
+        "that",
+        "it",
+    ];
+
+    function highlightText(terms) {
+        const textToHighlight = orginalText.textContent;
+        let similarOrgWords = fuzzyMatchSentence(terms, textToHighlight)
+        const highlightedText = textToHighlight.replace(new RegExp('\\b(' + similarOrgWords.split(" ").join('|') + ')\\b', 'g'), '<span class="highlight">$1</span>');
+        orginalText.innerHTML = highlightedText;
+    }
+
+    function logSelectedText() {
+        selectedText = window.getSelection().toString().trim();
+
+        if (selectedText) {
+            console.log('Selected Text:', selectedText);
+            highlightText(selectedText);
+        } else {
+            clearHighlight();
+        }
+    }
+
+    function clearHighlight() {
+        orginalText.innerHTML = orginalText.textContent;
+    }
+
+    saveAsTextButton.addEventListener('click', function () {
+        const textToSave = generatedText.value;
+        const blob = new Blob([textToSave], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = window.URL.createObjectURL(blob);
+        a.download = 'generated_text.txt';
+        a.click();
+    });
+
+    textareaElement.addEventListener('mouseup', logSelectedText);
+
+    toggleOriginalTextButton.addEventListener('click', function () {
+        originalTextDiv.style.display = originalTextDiv.style.display === 'none' ? 'block' : 'none';
+    });
+
+
+
+</script>
+</body>
+</html>
