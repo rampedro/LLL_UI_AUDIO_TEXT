@@ -1,12 +1,12 @@
 ## LLM call to be completed
 
 
-- **Multiple LLM is called with chunked text 
-- **Text may also take overlapping values to ensure lossless transformations
-- **Flask API and with HTML5 javasctip FRONT-END
-- **Selecting part generated Text highlights corresponding from original text
-- **Find medical entities
-- **Adds found medical entities into the prompt send to LLM for better results
+- **Longer LLMs with Multiple call (chunking algortihm) 
+- **Overlapping chunks to ensure lossless transformations
+- **Flask API and with HTML5 javasctip FRONT-END (templates/indext.html)
+- **Interaction: Selection-  Highlights Transribed Orginal Text from corresponding user FORM with mouse selection
+- **Finds medical entities
+- **Ingects medication to all calls to achieves a more accurate results.
 
 
 
