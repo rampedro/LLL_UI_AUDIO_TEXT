@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run the curl command to get the token and capture the result
-token_response=$(curl -s -X POST 'https://iam.cloud.ibm.com/identity/token' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=sB4usyiCtMSEUGFronzyIHrGdflMEWCJtMXM3STrh5c1')
+token_response=$(curl -s -X POST 'https://iam.cloud.ibm.com/identity/token' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=')
 # Check if the curl command was successful
 if [ $? -eq 0 ]; then
     echo "Curl command successful. Response:"
