@@ -35,7 +35,7 @@ and >docker run -p 8090:8090 my-flask-app
 
 ## Features
 
-- **Ehsan: Generate Text from Audio**
+- ** Generate Text from Audio**
   - This feature automatically converts audio input to text and connects it to a DOM element with the tag id `user_input`.
 
 - **Adding Medical Condition Entity Recognition**
